@@ -44,4 +44,11 @@ public class ByteBufDemo {
         System.out.println("writerIndex: " + buf.writerIndex());
         System.out.println("capacity: " + buf.capacity() + "\n");
     }
+
+    public static void printBuf(byte[] arr, int offset, int len){
+        System.out.println("array: " + arr);
+        System.out.println("array -> string: " + new String(arr));
+        System.out.println("offset: " + offset);
+        System.out.println("len: " + len);
+    }
 }
