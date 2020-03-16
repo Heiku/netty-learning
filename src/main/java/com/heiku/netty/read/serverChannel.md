@@ -7,7 +7,7 @@
     - channelFactory.newChannel()
 
     这里的 newChannel() 实际上是将传递的 `channel(NioServerSocketChannel.class)` class 对象通过反射的方式得到，
-    注意： 这里将会调用 NioServerSocketChannel 的构造方法，就是 [下面的过程](#反射创建服务端 Channel)
+    注意： 这里将会调用 NioServerSocketChannel 的构造方法，就是 ([下面的过程](#反射创建服务端 Channel))
     
     - init()
     
