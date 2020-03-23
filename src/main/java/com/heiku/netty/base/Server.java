@@ -1,4 +1,4 @@
-package com.heiku.netty.demo;
+package com.heiku.netty.base;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;

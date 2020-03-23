@@ -1,4 +1,4 @@
-package com.heiku.netty.demo;
+package com.heiku.netty.base;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
