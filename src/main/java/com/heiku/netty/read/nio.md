@@ -40,7 +40,67 @@ mark() & reset():
 通过 mark() 标记 Buffer 中一个特定的 position，之后可以通过 reset() 恢复到这个 position
 ```
 
-#### 原理
+### Scatter / Gather
+
+* Scattering Reads
+
+Scattering Reads 指从一个 Channel 读取到多个 buffer 中，
+
+```
+ByteBuffer header = ByteBuffer.allocate(128);
+ByteBuffer body   = ByteBuffer.allocate(1024);
+
+// 按照数组中的顺序从 channel 中读取的数据写入到 buffer中，当 header 写满之后，再写入到 body 中
+ByteBuffer[] bufferArray = { header, body };        
+
+channel.read(bufferArray);
+```
+
+* Gathering Writes
+
+Gathering Writes 是指将数据从多个 buffer 写入到同一个 channel。
+
+```
+ByteBuffer header = ByteBuffer.allocate(128);
+ByteBuffer body   = ByteBuffer.allocate(1024);
+ByteBuffer[] bufferArray = { header, body };        
+
+channel.write(bufferArray);
+
+```
+
+### Selector
+
+Selector 是 NIO 中能够检测一到多个 Channel，并能够知晓通道是否能为诸如读写事件做好准备的组件。这样，一个单独的线程就
+可以管理多个 channel，从而管理多个网络连接。减少了多线程的内存占用及上下文切换带来的性能开销。
+
+* 事件
+
+```
+SelectionKey.OP_CONNECT：    某个 channel 成功连接到另一个服务器
+SelectionKey.OP_ACCEPT：     serverSocketChannel 准备好接收新进入的连接
+SelectionKey.OP_READ：       一个数据可读的通道
+SelectionKey.OP_WRITE：      等待写数据的通道
+``` 
+
+* 操作
+
+```
+select()： 一旦向 Selector 注册了一或多个 channel，就可以调用 select() 返回已经准备就绪的 channel
+
+select():               阻塞到至少一个 channel 在注册的事件上就绪了
+select(long timeout):   和 select() 一样，最长会阻塞 timeout ms
+selectNow():            不会阻塞，不管什么通道就绪都立即返回，没有就绪直接返回0
+
+selectedKeys(): 返回多个通道就绪的 set 集合，需要通过 iterator遍历，并 iter.remove() 删除 SelectionKey 实例
+
+wakeUp(): 某个线程调用 select() 之后阻塞了，只需要在调用 select 那个selector 对象上调用 Selector.wakeUp() 就可立即返回
+
+close(): 使用完毕关闭 
+
+
+selectionKey.attach():      可以给一个对象或者更多信息附着到 SelectionKey 上
+```
 
 
 

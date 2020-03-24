@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
+ * Nio Server
+ *
  * @Author: Heiku
  * @Date: 2020/3/23
  */
@@ -39,6 +41,8 @@ public class NIOEchoServer {
 
             // same with serverSocketChannel, return a SelectorProviderImpl(WindowsSelectorImpl)
             selector = Selector.open();
+
+            // register serverSocketChannel on selector, to deal with the accept event
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
             System.out.println("NIOEchoServer start, port: " + port);
@@ -50,6 +54,7 @@ public class NIOEchoServer {
         // use main thread to get accept socket
         while (true){
             try {
+                // select a set of channel who are ready
                 selector.select();
             }catch (IOException e){
                 e.printStackTrace();
@@ -62,17 +67,18 @@ public class NIOEchoServer {
                 try {
                     // acceptable
                     if (key.isAcceptable()){
+                        // get the registered channel on above, accept the socketChannel from client
                         ServerSocketChannel serverChannel = (ServerSocketChannel) key.channel();
                         SocketChannel socketChannel = serverChannel.accept();
 
                         // nio
                         socketChannel.configureBlocking(false);
 
-                        // client register selector
+                        // client register on selector, start to read/write data
                         SelectionKey clientKey = socketChannel.register(selector,
                                 SelectionKey.OP_READ | SelectionKey.OP_WRITE);
 
-                        // allocate byteBuffer
+                        // allocate byteBuffer for channel buffer
                         ByteBuffer buffer = ByteBuffer.allocate(100);
                         clientKey.attach(buffer);
                     }
